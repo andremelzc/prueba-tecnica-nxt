@@ -78,7 +78,7 @@ El despliegue genera una "URL de punto de enlace de API".
 * **Body (raw/JSON):**
     ```json
     {
-      "titulo": "Hacer el README de la Parte 2"
+      "titulo": "Revisar la prueba técnica de Andre Melendez Cava"
     }
     ```
 

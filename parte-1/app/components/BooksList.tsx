@@ -1,7 +1,8 @@
 "use client";
-import { useBooks } from "../hooks/useHook";
+import { useBooks } from "../hooks/useBooks";
 
 const BooksList = () => {
+  // Uso del hook personalizado para obtener los libros (para centrar la lógica en una única parte)
   const { books, loading, error } = useBooks();
 
   if (loading) {

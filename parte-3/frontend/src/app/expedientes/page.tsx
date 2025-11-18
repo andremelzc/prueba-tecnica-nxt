@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useExpediente } from "@/hooks/useExpediente";
 import EditModal from "@/components/EditModal";
 
+// Definimos la interfaz para un expediente (la misma que en el backend)
 interface Expediente {
   id: string;
   nombre: string;
@@ -29,12 +30,13 @@ export default function ExpedientesPage() {
     crearError,
     crearLoading,
     handleCreate,
-    eliminarError,
     eliminarLoading,
     handleDelete,
-    editarError,
+    eliminarError,
     editarLoading,
+    editarError,
     handleUpdate,
+    successMessage,
   } = useExpediente();
 
   // Estado para el manejo del modal de expediente
@@ -51,6 +53,7 @@ export default function ExpedientesPage() {
     router.push("/login");
   };
 
+  // Mostrar estados de carga y error
   if (loading) {
     return <div>Cargando expedientes...</div>;
   }
@@ -126,6 +129,29 @@ export default function ExpedientesPage() {
 
       <hr className="my-8 border-gray-300" />
 
+      <div className="space-y-3 mb-6">
+        {/* Mensaje de Éxito (para crear, editar y eliminar) */}
+        {successMessage && (
+          <div className="p-3 bg-green-100 text-green-800 border border-green-300 rounded-md">
+            {successMessage}
+          </div>
+        )}
+
+        {/* Error de Eliminar */}
+        {eliminarError && (
+          <div className="p-3 bg-red-100 text-red-800 border border-red-300 rounded-md">
+            {eliminarError}
+          </div>
+        )}
+
+        {/* Error de Editar */}
+        {editarError && (
+          <div className="p-3 bg-red-100 text-red-800 border border-red-300 rounded-md">
+            {editarError}
+          </div>
+        )}
+      </div>
+
       <div className="mt-4">
         <h2 className="text-xl font-semibold mb-4">Expedientes Actuales</h2>
 
@@ -188,13 +214,13 @@ export default function ExpedientesPage() {
                     </span>
                   </td>
 
-                  {/* Acciones */}
+                  {/* Botones de acción */}
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-8">
                     <button
                       onClick={() => setEditingExpediente(expediente)}
                       className="text-indigo-600 hover:text-indigo-900 cursor-pointer"
                     >
-                      {editarLoading && !eliminarLoading
+                      {editarLoading === expediente.id
                         ? "Guardando..."
                         : "Editar"}
                     </button>
@@ -202,7 +228,7 @@ export default function ExpedientesPage() {
                       onClick={() => handleDelete(expediente.id)}
                       className="text-red-600 hover:text-red-900 cursor-pointer"
                     >
-                      {eliminarLoading && !editarLoading
+                      {eliminarLoading === expediente.id
                         ? "Eliminando..."
                         : "Eliminar"}
                     </button>
@@ -213,6 +239,7 @@ export default function ExpedientesPage() {
           </table>
         </div>
       </div>
+      {/* Lógica de modal */}
       {editingExpediente && (
         <EditModal
           expediente={editingExpediente}

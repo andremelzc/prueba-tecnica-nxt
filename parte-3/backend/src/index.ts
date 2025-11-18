@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
 
+// Interface  para un expediente (atributos definidos en los requisitos)
 interface Expediente {
   id: string;
   nombre: string;
@@ -9,6 +10,7 @@ interface Expediente {
   estado: string;
 }
 
+// Mock de base de datos en memoria
 const db: Expediente[] = [
   {
     id: "1",
@@ -72,6 +74,7 @@ app.get("/", (req, res) => {
   res.send("¡Hola, mundo!");
 });
 
+// A cada endpoint se le incluye el middleware autenticarToken para protegerlo de personas que no han iniciado sesión>
 // 2. Endpoint GET para leer todos los expedientes
 app.get("/expedientes", autenticarToken, (req, res) => {
   res.json(db);

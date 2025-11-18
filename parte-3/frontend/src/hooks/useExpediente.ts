@@ -22,10 +22,19 @@ export const useExpediente = () => {
   const [estado, setEstado] = useState("activo");
   const [crearError, setCrearError] = useState<string | null>(null);
   const [crearLoading, setCrearLoading] = useState<boolean>(false);
-  const [eliminarLoading, setEliminarLoading] = useState<boolean>(false);
+  const [eliminarLoading, setEliminarLoading] = useState<string | null>(null);
   const [eliminarError, setEliminarError] = useState<string | null>(null);
-  const [editarLoading, setEditarLoading] = useState<boolean>(false);
+  const [editarLoading, setEditarLoading] = useState<string | null>(null);
   const [editarError, setEditarError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Función para limpiar mensajes
+  const clearMessages = () => {
+    setCrearError(null); 
+    setEliminarError(null);
+    setEditarError(null);
+    setSuccessMessage(null);
+  };
 
   // READ: Obtener la lista de expedientes
   useEffect(() => {
@@ -65,12 +74,13 @@ export const useExpediente = () => {
   // CREATE: Función para crear un nuevo expediente
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    setCrearError(null);
+    clearMessages();
     setCrearLoading(true);
 
     // Validamos los campos del formulario
     if (!nombre || !descripcion || !estado) {
       setCrearError("Todos los campos son obligatorios");
+      setCrearLoading(false);
       return;
     }
 
@@ -97,6 +107,10 @@ export const useExpediente = () => {
       // Añadimos el nuevo expediente a la lista
       setExpedientes((prev) => [...prev, data]);
 
+      // Feedback de éxito:
+      setSuccessMessage("Expediente creado exitosamente");
+      setTimeout(() => setSuccessMessage(null), 3000);
+
       // Limpiamos el formulario
       setNombre("");
       setDescripcion("");
@@ -114,14 +128,14 @@ export const useExpediente = () => {
 
   // DELETE: Función para eliminar un expediente
   const handleDelete = async (id: string) => {
-    setEliminarError(null);
-    setEliminarLoading(true);
+    clearMessages();
+    setEliminarLoading(id);
 
     // Pedir confirmación
     if (
       !window.confirm("¿Estás seguro de que quieres eliminar este expediente?")
     ) {
-      setEliminarLoading(false);
+      setEliminarLoading(null);
       return;
     }
 
@@ -145,22 +159,25 @@ export const useExpediente = () => {
       setExpedientes((prev) =>
         prev.filter((expediente) => expediente.id !== id)
       );
+
+      // Feedback de éxito:
+      setSuccessMessage("Expediente eliminado exitosamente");
+      setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
+      let messaage = "Error desconocido";
       if (err instanceof Error) {
-        setEliminarError(err.message);
-      } else {
-        setEliminarError("Error desconocido");
-        throw err;
+        messaage = err.message;
       }
+      setEliminarError(messaage);
     } finally {
-      setEliminarLoading(false);
+      setEliminarLoading(null);
     }
   };
 
   // UPDATE: Función para editar un expediente
   const handleUpdate = async (id: string, data: Partial<Expediente>) => {
-    setEditarLoading(true);
-    setEditarError(null);
+    setEditarLoading(id);
+    clearMessages();
 
     // Obtenemos el token de las cookies
     const token = Cookie.get("token");
@@ -188,14 +205,18 @@ export const useExpediente = () => {
           expediente.id === id ? updatedExpediente : expediente
         )
       );
+
+      // Feedback de éxito:
+      setSuccessMessage("Expediente actualizado exitosamente");
+      setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
+      let messaage = "Error desconocido";
       if (err instanceof Error) {
-        setEditarError(err.message);
-      } else {
-        setEditarError("Error desconocido");
+        messaage = err.message;
       }
+      setEditarError(messaage);
     } finally {
-      setEditarLoading(false);
+      setEditarLoading(null);
     }
   };
 
@@ -222,5 +243,6 @@ export const useExpediente = () => {
     editarError,
     editarLoading,
     handleUpdate,
+    successMessage,
   };
 };

@@ -77,6 +77,11 @@ export default function LoginPage() {
               className="mt-1 block w-full border border-gray-300 rounded-md p-2 shadow-sm "
             />
           </div>
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md mb-4">
+              <p>{`Revise las credenciales e intente nuevamente (están en el README.md).`}</p>
+            </div>
+          )}
           <button
             type="submit"
             className="w-full bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition disabled:bg-gray-400"
